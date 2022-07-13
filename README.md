@@ -1,2 +1,4 @@
 # Trench
-An like bot
+made by azbisinmir
+
+same as onlp like bot
