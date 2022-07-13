@@ -1,55 +1,60 @@
-import requests
-import base64 #their "token" system lmfao
+import requests, base64
+
+class Instagram:
+    def __init__(self, url: str, choice: str):
+        self.url = url
+        self.choice = "instagram_likes" if choice == 1 else "followers"
+
+    def xuserid(self, session: requests.Session):
+        userid = session.get(
+            "https://instatrench.com/v5/followforfollow/cpa",
+            params = {
+                "action":"info"
+            },
+            headers = {
+                "Content-Type": "application/x-www-form-urlencoded",
+                "User-Agent": "Mozilla/5.0 (Windows NT 10.0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/99.0.7113.93 Safari/537.36"
+            }
+        ).json()["userId"]
+        
+        return userid
+
+    def main(self):
+        while True:
+            session = requests.Session()
+            
+            session.get(
+                url = "https://instatrench.com/v5/followforfollow/cpa",
+                params = {
+                    "token":base64.b64encode(self.url.encode()),
+                    "action": self.choice,
+                    "st": "service"
+                }
+            )
+
+            session.get(
+                url = "https://instatrench.com/v5/followforfollow/cpa-user/",
+                params = {
+                    "token":base64.b64encode(self.url.encode()),
+                    "survey":"2333222",
+                    "email":"no_email"
+                    }
+            )
+
+            userid = self.xuserid(session)
+            
+            session.post("https://instatrench.com/v5/followforfollow/Magic/surveyApp",data = 'mood=mid&data={"userId":"'+userid+'","answerOp":"D","questionId":"8"}',headers = {"Content-Type": "application/x-www-form-urlencoded","User-Agent": "Mozilla/5.0 (Windows NT 10.0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/99.0.7113.93 Safari/537.36"})
+            session.post("https://instatrench.com/v5/followforfollow/Magic/surveyApp",data = 'mood=mid&data={"userId":"'+userid+'","answerOp":"A","questionId":"9"}',headers = {"Content-Type": "application/x-www-form-urlencoded","User-Agent": "Mozilla/5.0 (Windows NT 10.0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/99.0.7113.93 Safari/537.36"})
+            session.post("https://instatrench.com/v5/followforfollow/Magic/surveyApp",data = 'mood=mid&data={"userId":"'+userid+'","answerOp":"B","questionId":"10"}',headers = {"Content-Type": "application/x-www-form-urlencoded","User-Agent": "Mozilla/5.0 (Windows NT 10.0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/99.0.7113.93 Safari/537.36"})
+            session.post("https://instatrench.com/v5/followforfollow/Magic/surveyApp",data = 'mood=mid&data={"userId":"'+userid+'","answerOp":"A","questionId":"11"}',headers = {"Content-Type": "application/x-www-form-urlencoded","User-Agent": "Mozilla/5.0 (Windows NT 10.0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/99.0.7113.93 Safari/537.36"})
+            session.post("https://instatrench.com/v5/followforfollow/Magic/surveyApp",data = 'mood=mid&data={"userId":"'+userid+'","answerOp":"A","questionId":"12"}',headers = {"Content-Type": "application/x-www-form-urlencoded","User-Agent": "Mozilla/5.0 (Windows NT 10.0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/99.0.7113.93 Safari/537.36"})
+            session.post("https://instatrench.com/v5/followforfollow/Magic/surveyApp",data = 'mood=mid&data={"userId":"'+userid+'","answerOp":"A","questionId":"12"}',headers = {"Content-Type": "application/x-www-form-urlencoded","User-Agent": "Mozilla/5.0 (Windows NT 10.0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/99.0.7113.93 Safari/537.36"})
+            req = session.post("https://instatrench.com/v5/followforfollow/Magic/surveyApp",data = 'mood=fin&data={"userId":"'+userid+'"}',headers = {"Content-Type": "application/x-www-form-urlencoded","User-Agent": "Mozilla/5.0 (Windows NT 10.0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/99.0.7113.93 Safari/537.36"}).text
+            
+            print(f"Sucess  | Sent 20 likes: {req}")
 
 if __name__ == "__main__":
-    print("""'########:'########::'########:'##::: ##::'######::'##::::'##:                                                                 
-... ##..:: ##.... ##: ##.....:: ###:: ##:'##... ##: ##:::: ##:                                                                 
-::: ##:::: ##:::: ##: ##::::::: ####: ##: ##:::..:: ##:::: ##:                                                                 
-::: ##:::: ########:: ######::: ## ## ##: ##::::::: #########:                                                                 
-::: ##:::: ##.. ##::: ##...:::: ##. ####: ##::::::: ##.... ##:                                                                 
-::: ##:::: ##::. ##:: ##::::::: ##:. ###: ##::: ##: ##:::: ##:                                                                 
-::: ##:::: ##:::. ##: ########: ##::. ##:. ######:: ##:::: ##:                                                                 
-:::..:::::..:::::..::........::..::::..:::......:::..:::::..::                                                                 
-'########::'##:::'##:::::::'###::::'########:'##::::'##:'########::'####::'######::'####:'##::: ##:'##::::'##:'####:'########::
- ##.... ##:. ##:'##:::::::'## ##:::..... ##:: ##:::: ##: ##.... ##:. ##::'##... ##:. ##:: ###:: ##: ###::'###:. ##:: ##.... ##:
- ##:::: ##::. ####:::::::'##:. ##:::::: ##::: ##:::: ##: ##:::: ##:: ##:: ##:::..::: ##:: ####: ##: ####'####:: ##:: ##:::: ##:
- ########::::. ##:::::::'##:::. ##:::: ##:::: ##:::: ##: ########::: ##::. ######::: ##:: ## ## ##: ## ### ##:: ##:: ########::
- ##.... ##:::: ##::::::: #########::: ##::::: ##:::: ##: ##.... ##:: ##:::..... ##:: ##:: ##. ####: ##. #: ##:: ##:: ##.. ##:::
- ##:::: ##:::: ##::::::: ##.... ##:: ##:::::: ##:::: ##: ##:::: ##:: ##::'##::: ##:: ##:: ##:. ###: ##:.:: ##:: ##:: ##::. ##::
- ########::::: ##::::::: ##:::: ##: ########:. #######:: ########::'####:. ######::'####: ##::. ##: ##:::: ##:'####: ##:::. ##:
-........::::::..::::::::..:::::..::........:::.......:::........:::....:::......:::....::..::::..::..:::::..::....::..:::::..::""")
-    r = requests.Session()
-    what = input("[+] What do you need? Enter 1=Instagram likes 2=Instagram Follower !VERY SLOW! (can take up to a day until they come): ")
-    if(what == "1"):
-        action = "instagram_likes"
-        link = input("[+] Please enter your IG post link: ")
-    elif(what == "2"):
-        action = "followers"
-        link = input("[+] Please enter your Instagram Username: ")
-    else:
-        print("[-] Invalid type")
-        quit()
-        
-    while True:
-        r.get("https://instatrench.com/v5/followforfollow/cpa",params = {"token":base64.b64encode(link.encode("utf-8")),"action":action,"st":"service"})
-        
-        r.get("https://instatrench.com/v5/followforfollow/cpa-user/",params = {"token":base64.b64encode(link.encode("utf-8")),"survey":"2333222","email":"no_email"})
-        
-        userid = r.get("https://instatrench.com/v5/followforfollow/cpa",params = {"action":"info"},headers = {"Content-Type": "application/x-www-form-urlencoded","User-Agent": "Mozilla/5.0 (Windows NT 10.0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/99.0.7113.93 Safari/537.36"}).json()["userId"]
-        
-        r.post("https://instatrench.com/v5/followforfollow/Magic/surveyApp",data = 'mood=mid&data={"userId":"'+userid+'","answerOp":"D","questionId":"8"}',headers = {"Content-Type": "application/x-www-form-urlencoded","User-Agent": "Mozilla/5.0 (Windows NT 10.0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/99.0.7113.93 Safari/537.36"})
-        
-        r.post("https://instatrench.com/v5/followforfollow/Magic/surveyApp",data = 'mood=mid&data={"userId":"'+userid+'","answerOp":"A","questionId":"9"}',headers = {"Content-Type": "application/x-www-form-urlencoded","User-Agent": "Mozilla/5.0 (Windows NT 10.0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/99.0.7113.93 Safari/537.36"})
-        
-        r.post("https://instatrench.com/v5/followforfollow/Magic/surveyApp",data = 'mood=mid&data={"userId":"'+userid+'","answerOp":"B","questionId":"10"}',headers = {"Content-Type": "application/x-www-form-urlencoded","User-Agent": "Mozilla/5.0 (Windows NT 10.0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/99.0.7113.93 Safari/537.36"})
-        
-        r.post("https://instatrench.com/v5/followforfollow/Magic/surveyApp",data = 'mood=mid&data={"userId":"'+userid+'","answerOp":"A","questionId":"11"}',headers = {"Content-Type": "application/x-www-form-urlencoded","User-Agent": "Mozilla/5.0 (Windows NT 10.0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/99.0.7113.93 Safari/537.36"})
-        
-        r.post("https://instatrench.com/v5/followforfollow/Magic/surveyApp",data = 'mood=mid&data={"userId":"'+userid+'","answerOp":"A","questionId":"12"}',headers = {"Content-Type": "application/x-www-form-urlencoded","User-Agent": "Mozilla/5.0 (Windows NT 10.0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/99.0.7113.93 Safari/537.36"})
-        
-        r.post("https://instatrench.com/v5/followforfollow/Magic/surveyApp",data = 'mood=mid&data={"userId":"'+userid+'","answerOp":"A","questionId":"12"}',headers = {"Content-Type": "application/x-www-form-urlencoded","User-Agent": "Mozilla/5.0 (Windows NT 10.0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/99.0.7113.93 Safari/537.36"})#submit "survey"
-        
-        
-        print(r.post("https://instatrench.com/v5/followforfollow/Magic/surveyApp",data = 'mood=fin&data={"userId":"'+userid+'"}',headers = {"Content-Type": "application/x-www-form-urlencoded","User-Agent": "Mozilla/5.0 (Windows NT 10.0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/99.0.7113.93 Safari/537.36"}).text)#submit order
-        
-        print("[+] Order sent!")
+    link = input('[?] post link: ')
+    choice = int(input('[?] 1) likes \n 2) Follows (slow asf 1 day +)\n choice: '))
+
+    Instagram(link, choice).main()
